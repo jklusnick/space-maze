@@ -111,9 +111,9 @@ while is_running:
 	
 	SCREEN.fill((1,1,1))
 	
-	pygame.draw.rect(SCREEN, (200, 200, 200), (232, 0, 616, 770))
-	pygame.draw.rect(SCREEN, (200, 200, 200), (232, 693, 616, 77))
-	pygame.draw.rect(SCREEN, (200, 200, 200), (232, 0, 616, 77))
+	pygame.draw.rect(SCREEN, (128, 128 ,128), (232, 0, 616, 770))
+	pygame.draw.rect(SCREEN, (128, 128, 128), (232, 693, 616, 77))
+	pygame.draw.rect(SCREEN, (128, 128, 128), (232, 0, 616, 77))
 
 	for x in range(0, 25):
 		pygame.draw.rect(SCREEN, (255, 255, 255), (random.randint(2, 230), random.randint(2, 768), random.randint(2, 3), random.randint(2, 3)))
@@ -133,7 +133,7 @@ while is_running:
 	for i in range(0, len(grid_overlay)):
 		square = grid_overlay[i]
 		if square['val'] == tile['safe']:
-			pygame.draw.rect(SCREEN, (200, 200, 200), (tile_size * square['x'] + 232, \
+			pygame.draw.rect(SCREEN, (128, 128, 128), (tile_size * square['x'] + 232, \
 				tile_size * square['y'] + tile_size, tile_size, tile_size))
 
 	
