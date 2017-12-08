@@ -315,6 +315,9 @@ while is_running:
 		SCREEN.blit(counter, (0,35)) #death counter display
 		SCREEN.blit(level, (0,0)) #level counter display
 
+		if level_counter > len(levels) - 1:
+			print "you win!"
+
 		#STARS
 		for x in range(0, 25):
 			pygame.draw.rect(SCREEN, (255, 255, 255), (random.randint(2, 232), random.randint(2, 768), random.randint(2, 3), random.randint(2, 3)))
