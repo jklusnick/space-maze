@@ -78,19 +78,20 @@ def beat_level():
 	global level
 	global grid
 	global grid_overlay
-	pygame.time.delay(1000)
+	global first_turn
 	player[0] = spawn[0]
 	player[1] = spawn[1]
 	level_counter += 1 
-	#grid = levels[level_counter]
-	#grid_overlay = []
+	grid = levels[level_counter]
+	pygame.time.delay(1000)
+	grid_overlay = []
 	death_counter = 0
 	level = myfont.render("Level %s" % (level_counter + 1), 1, (255,255,255)) #level counter update
+	first_turn = levels[level_counter][len(levels[level_counter])-1].index(1)
 
 
 tile_size = 77
 player = [0, DIMENSIONS[1] / tile_size - 1]
-print player[1]
 speed = tile_size
 
 tile = {
@@ -271,7 +272,10 @@ levels = [
 ]
 grid = levels[level_counter]
 
+first_turn = levels[level_counter][len(levels[level_counter])-1].index(1)
+
 grid_overlay = []
+beat__current_level = False
 
 def movement():
 	if KEYS['d'] and player[0] < len(grid[0]) - 1:
@@ -304,6 +308,26 @@ while is_running:
 				changeKeys(event.key, False)
 		if event.type == pygame.QUIT:
 			is_running = False
+
+	# UPDATE GAME/PATH
+
+	if start_game:
+		for y in range(0, len(grid)):
+			for x in range(0, len(grid[y])):
+				n=grid[y][x]
+				if player[0] == x and player[1] -1 == y and n == tile['kill']:
+					kill_player()
+				elif player[0] == x and player[1] -1 == y and n == tile['safe']:
+					grid_overlay.append({'val': n, 'x': x, 'y': y})
+				elif player[0] == x and player[1] -1 == y and n == tile['turn']:
+					grid_overlay.append({'val': n, 'x': x, 'y': y})
+				elif player[0] == x and player[1] -1 == y and n == tile['beat']:
+					grid_overlay.append({'val': n, 'x': x, 'y': y})
+					beat__current_level = True
+					
+
+	
+	movement()
 
 	# DRAW GAME
 	
@@ -344,6 +368,8 @@ while is_running:
 			if square['val'] == tile['beat']:
 				pygame.draw.rect(SCREEN, (255, 255, 255), (tile_size * square['x'] + 232, \
 					tile_size * square['y'] + tile_size, tile_size, tile_size))
+
+		pygame.draw.rect(SCREEN, (78,78,78), (tile_size * first_turn + 232, tile_size * 9, tile_size, tile_size))
 		
 		player_x, player_y = player[0] * tile_size + 232, player[1] * tile_size
 		pygame.draw.circle(SCREEN, (0, 0, 0), (player_x + tile_size / 2, player_y + tile_size / 2), 15)
@@ -358,26 +384,9 @@ while is_running:
 
 	pygame.display.update()
 
-
-	# UPDATE GAME/PATH
-
-	if start_game:
-		for y in range(0, len(grid)):
-			for x in range(0, len(grid[y])):
-				n=grid[y][x]
-				if player[0] == x and player[1] -1 == y and n == tile['kill']:
-					kill_player()
-				elif player[0] == x and player[1] -1 == y and n == tile['safe']:
-					grid_overlay.append({'val': n, 'x': x, 'y': y})
-				elif player[0] == x and player[1] -1 == y and n == tile['turn']:
-					grid_overlay.append({'val': n, 'x': x, 'y': y})
-				elif player[0] == x and player[1] -1 == y and n == tile['beat']:
-					grid_overlay.append({'val': n, 'x': x, 'y': y})
-					beat_level()
-					
-
-	
-	movement()
+	if beat__current_level:
+		beat__current_level = False
+		beat_level()
 
 	CLOCK.tick(TARGET_FPS)
 
