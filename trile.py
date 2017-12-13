@@ -28,14 +28,14 @@ red = (255, 0, 0)
 orange = (255, 165, 0)
 yellow = (255, 255, 0)
 yelgre = (0, 255, 165)
-green = (0, 255, 0)
+green = (0, 235, 0)
 blue = (0, 0, 255)
 purple = (255, 0, 255)
 
 colors = [
-	red, 
+	#red, 
 	orange, 
-	yellow, 
+	#yellow, 
 	yelgre, 
 	green, 
 	blue, 
@@ -81,13 +81,14 @@ def beat_level():
 	global first_turn
 	player[0] = spawn[0]
 	player[1] = spawn[1]
-	level_counter += 1 
-	grid = levels[level_counter]
+	level_counter += 1
+	if level_counter < len(levels):
+		grid = levels[level_counter]
+		first_turn = levels[level_counter][len(levels[level_counter])-1].index(1)
 	pygame.time.delay(1000)
 	grid_overlay = []
 	death_counter = 0
 	level = myfont.render("Level %s" % (level_counter + 1), 1, (255,255,255)) #level counter update
-	first_turn = levels[level_counter][len(levels[level_counter])-1].index(1)
 
 
 tile_size = 77
@@ -268,6 +269,16 @@ levels = [
 		[0, 2, 2, 0, 1, 0, 2, 2],
 		[0, 0, 2, 1, 2, 0, 0, 1],
 		[0, 0, 0, 0, 0, 0, 0, 1]
+	],
+	[
+		[1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1, 1]
 	]
 ]
 grid = levels[level_counter]
@@ -315,14 +326,23 @@ while is_running:
 		for y in range(0, len(grid)):
 			for x in range(0, len(grid[y])):
 				n=grid[y][x]
+
 				if player[0] == x and player[1] -1 == y and n == tile['kill']:
 					kill_player()
+					grid[y][x] = -1
 				elif player[0] == x and player[1] -1 == y and n == tile['safe']:
-					grid_overlay.append({'val': n, 'x': x, 'y': y})
+					grid_overlay.append( {
+						'val': n,
+						'x': x,
+						'y': y
+					} )
+					grid[y][x] = -1
 				elif player[0] == x and player[1] -1 == y and n == tile['turn']:
 					grid_overlay.append({'val': n, 'x': x, 'y': y})
+					grid[y][x] = -1
 				elif player[0] == x and player[1] -1 == y and n == tile['beat']:
 					grid_overlay.append({'val': n, 'x': x, 'y': y})
+					grid[y][x] = -1
 					beat__current_level = True
 					
 
@@ -336,11 +356,19 @@ while is_running:
 	if start_game:
 		
 		pygame.draw.rect(SCREEN, (128, 128, 128), (232, 693, 616, 77)) #start row
-		SCREEN.blit(counter, (0,35)) #death counter display
-		SCREEN.blit(level, (0,0)) #level counter display
+		
+		if level_counter + 1 < len(levels):
+			SCREEN.blit(counter, (0,35)) #death counter display
+			SCREEN.blit(level, (0,0)) #level counter display
 
-		if level_counter > len(levels) - 1:
-			print "you win!"
+		if level_counter >= len(levels) - 1:
+			win = myfont.render("YOU WIN", 1, (255,255,255))
+			for y in xrange(70, 770, 35):
+				SCREEN.blit(win, (40, y))
+				SCREEN.blit(win, (890, y))
+			for x in xrange(40, 1000, 170):
+				SCREEN.blit(win, (x, 35))
+				SCREEN.blit(win, (x, 0))
 
 		#STARS
 		for x in range(0, 25):
@@ -387,6 +415,10 @@ while is_running:
 	if beat__current_level:
 		beat__current_level = False
 		beat_level()
+
+	
+	if len(grid_overlay) >= 64:
+	 	break
 
 	CLOCK.tick(TARGET_FPS)
 
