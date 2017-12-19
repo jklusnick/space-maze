@@ -329,7 +329,6 @@ while is_running:
 
 				if player[0] == x and player[1] -1 == y and n == tile['kill']:
 					kill_player()
-					grid[y][x] = -1
 				elif player[0] == x and player[1] -1 == y and n == tile['safe']:
 					grid_overlay.append( {
 						'val': n,
